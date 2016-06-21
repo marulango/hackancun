@@ -70,16 +70,20 @@
         var mustache = new Image()
         mustache.src = '/img/mustache.png'
         var noseMouthDiff = Math.abs(positions[47][1] - positions[37][1])
-        var newWidth = Math.abs(positions[44][0] - positions[50][0])
+        var newWidth = Math.sqrt(Math.pow(positions[50][0] - positions[44][0],2)+Math.pow(positions[50][1] - positions[44][1],2))
         var newHeight = Math.abs(mustache.height * newWidth / mustache.width)
+        var angle = Math.atan((positions[44][1] - positions[50][1])/(positions[44][0] - positions[50][0]))
+        overlayCC.translate(positions[44][0], positions[44][1] - noseMouthDiff)
+        overlayCC.rotate(angle)
         overlayCC.drawImage(
           mustache,
-          positions[44][0],
-          positions[44][1] - (noseMouthDiff),
+          0,
+          0,
           newWidth,
           newHeight
         )
-        // console.log(positions)
+        overlayCC.rotate(-angle)
+        overlayCC.translate(-positions[44][0], -(positions[44][1] - noseMouthDiff))
       }
     }
 

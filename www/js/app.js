@@ -1,4 +1,5 @@
 /* global Image */
+
 function app () {
   var vid = document.querySelector('.videoel')
   var overlay = document.querySelector('.overlay')
@@ -10,9 +11,11 @@ function app () {
   var container = document.querySelector('.container')
   var resultImage = document.querySelector('.resultimage')
   var cancelButton = document.querySelector('.cancelbutton')
+  var stampButton = document.querySelector('.stampbutton')
   var videoWidth = 360
   var videoHeight = 270
   var stream
+  var imageBlob
 
   navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia
   window.URL = window.URL || window.webkitURL || window.msURL || window.mozURL
@@ -32,8 +35,9 @@ function app () {
 
   vid.addEventListener('canplay', canDetect, false)
   startButton.addEventListener('click', startDetecting, false)
-  saveButton.addEventListener('click', saveImage, false)
-  cancelButton.addEventListener('click', cancel, false)
+  saveButton.addEventListener('click', previewImage, false)
+  cancelButton.addEventListener('click', cancelPreview, false)
+  stampButton.addEventListener('click', stamp, false)
 
   function canDetect () {
     startButton.innerText = 'start'
@@ -122,15 +126,6 @@ function app () {
     tonatiuh.forEach(function (part) {
       drawPart(overlayCC, part.src, part.point1, part.point2, part.scale, part.offsetX, part.offsetY)
     })
-    var mustache = new Image()
-    mustache.src = 'img/hidalgo.png'
-    var mustachePoint = positions[62]
-    var newWidth = Math.sqrt(Math.pow(positions[1][0] - positions[13][0], 2) + Math.pow(positions[1][1] - positions[13][1], 2))
-    newWidth = newWidth * 1.5
-    var newHeight = Math.abs(mustache.height * newWidth / mustache.width)
-    var angle = Math.atan((positions[1][1] - positions[13][1]) / (positions[1][0] - positions[13][0]))
-
-    rotateAndPaintImage(overlayCC, mustache, angle, mustachePoint[0], mustachePoint[1], newWidth / 2, newHeight / 2, newWidth, newHeight)
   }
 
   function onUserMediaSuccess (videoStream) {
@@ -151,7 +146,7 @@ function app () {
     window.alert('User media error.')
   }
 
-  function saveImage () {
+  function previewImage () {
     if (!stream) {
       console.error('saving image when theres no stream')
       return
@@ -164,15 +159,71 @@ function app () {
     ctrack.stop()
 
     results.toBlob(function cb (blob) {
-      var url = window.URL.createObjectURL(blob)
+      imageBlob = blob
+      var url = window.URL.createObjectURL(imageBlob)
       resultImage.src = url
     }, 'image/jpeg', 90)
   }
 
-  function cancel () {
+  function cancelPreview () {
     vid.play()
     ctrack.start()
     setState('detecting')
+  }
+
+  function stamp () {
+    if (!(window.cordova && window.cordova.file)) {
+      return
+    }
+
+    function callback (err, fileEntry) {
+      if (err) {
+        console.error('err')
+      }
+      // this is the complete list of currently supported params you can pass to the plugin (all optional)
+      var options = {
+        message: '#Tonatiuh era responsable de soportar el universo. Para prevenir el fin del mundo, los Aztecas creían que era esencial mantener la fuerza del dios del Sol ofreciéndole sacrificios humanos. #badAss #timeStamps', // not supported on some apps (Facebook, Instagram)
+        files: [fileEntry.nativeURL], // an array of filenames either locally or remotely
+        chooserTitle: 'Compartir en…' // Android only, you can override the default share sheet title
+      }
+
+      function onSuccess (result) {
+        console.log('success', result)
+      }
+
+      function onError (msg) {
+        console.error('Sharing failed with message: ' + msg)
+      }
+
+      window.plugins.socialsharing.shareWithOptions(options, onSuccess, onError)
+    }
+
+    window.requestFileSystem(window.LocalFileSystem.PERSISTENT, 0, function (fs) {
+      window.resolveLocalFileSystemURL(window.cordova.file.externalRootDirectory, function (rootDirEntry) {
+        rootDirEntry.getDirectory('timestamps', {create: true}, function (dirEntry) {
+          dirEntry.getFile('tempImage.jpg', {
+            create: true, exclusive: false
+          }, function (fileEntry) {
+            writeFile(fileEntry)
+          }, callback)
+        })
+      })
+    })
+
+    function writeFile (fileEntry) {
+      // Create a FileWriter object for our FileEntry (log.txt).
+      fileEntry.createWriter(function (fileWriter) {
+        fileWriter.onwriteend = function () {
+          callback(null, fileEntry)
+        }
+
+        fileWriter.onerror = function (err) {
+          callback(err)
+        }
+
+        fileWriter.write(imageBlob)
+      })
+    }
   }
 
   function setState (state) {

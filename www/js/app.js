@@ -1,4 +1,4 @@
-/* global Image, clm, pModel */
+/* global Image */
 function app () {
   var vid = document.querySelector('.videoel')
   var overlay = document.querySelector('.overlay')
@@ -7,15 +7,15 @@ function app () {
   var resultsCC = results.getContext('2d')
   var startButton = document.querySelector('.startbutton')
   var saveButton = document.querySelector('.savebutton')
-  var videoWidth = 411
-  var videoHeight = 308
+  var videoWidth = 360
+  var videoHeight = 480
   var stream
 
   navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia
   window.URL = window.URL || window.webkitURL || window.msURL || window.mozURL
 
   var ctrack = new clm.tracker({useWebGL : true}) // eslint-disable-line
-  ctrack.init(pModel)
+  window.ctrack.init(window.pModel)
 
   // check for camerasupport
   if (!navigator.getUserMedia) {
@@ -102,13 +102,12 @@ function app () {
     resultsCC.drawImage(vid, 0, 0, videoWidth, videoHeight)
     resultsCC.drawImage(overlay, 0, 0, videoWidth, videoHeight)
 
-    var dataurl = results.toBlob(function cb (blob) {
+    results.toBlob(function cb (blob) {
       var image = document.createElement('img')
       var url = window.URL.createObjectURL(blob)
       image.src = url
       document.body.appendChild(image)
     }, 'image/jpeg', 90)
-    console.log(dataurl)
   }
 }
 

@@ -1,3 +1,3 @@
 # hackancun
 
-`cordova prepare`
+Pues, aquí va. 

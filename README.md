@@ -1,1 +1,3 @@
 # hackancun
+
+`cordova prepare`

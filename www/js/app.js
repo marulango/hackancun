@@ -85,7 +85,7 @@ function init () {
 }
 
 if (window.cordova) {
-  window.cordova.addEventListener('deviceready', init, false)
+  document.addEventListener('deviceready', init, false)
 } else {
   init()
 }

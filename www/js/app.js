@@ -41,29 +41,13 @@ function init () {
     if (positions) {
       // ctrack.draw(overlay)
       var mustache = new Image()
-      mustache.src = '/img/mustache.png'
-      var mustachePoint = [(positions[50][0] + positions[44][0]) / 2, (positions[50][1] + positions[44][1]) / 2]
-      var newWidth = Math.sqrt(Math.pow(positions[50][0] - positions[44][0], 2) + Math.pow(positions[50][1] - positions[44][1], 2))
+      mustache.src = '/img/tonatiuh.png'
+      var mustachePoint = positions[62]
+      var newWidth = Math.sqrt(Math.pow(positions[1][0] - positions[13][0], 2) + Math.pow(positions[1][1] - positions[13][1], 2))
       var newHeight = Math.abs(mustache.height * newWidth / mustache.width)
-      var angle = Math.atan((positions[44][1] - positions[50][1]) / (positions[44][0] - positions[50][0]))
+      var angle = Math.atan((positions[1][1] - positions[13][1]) / (positions[1][0] - positions[13][0]))
 
-      rotateAndPaintImage(overlayCC, mustache, angle, mustachePoint[0], mustachePoint[1], newWidth / 2, newHeight * 2, newWidth, newHeight)
-
-      // var noseMouthDiff = Math.abs(positions[47][1] - positions[37][1])
-      // var newWidth = Math.sqrt(Math.pow(positions[50][0] - positions[44][0],2)+Math.pow(positions[50][1] - positions[44][1],2))
-      // var newHeight = Math.abs(mustache.height * newWidth / mustache.width)
-      // var angle = Math.atan((positions[44][1] - positions[50][1])/(positions[44][0] - positions[50][0]))
-      // overlayCC.translate(positions[44][0], positions[44][1] - noseMouthDiff)
-      // overlayCC.rotate(angle)
-      // overlayCC.drawImage(
-      //   mustache,
-      //   0,
-      //   0,
-      //   newWidth,
-      //   newHeight
-      // )
-      // overlayCC.rotate(-angle)
-      // overlayCC.translate(-positions[44][0], -(positions[44][1] - noseMouthDiff))
+      rotateAndPaintImage(overlayCC, mustache, angle, mustachePoint[0], mustachePoint[1], newWidth / 2, newHeight / 2, newWidth, newHeight)
     }
   }
 

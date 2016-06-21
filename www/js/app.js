@@ -41,9 +41,10 @@ function init () {
     if (positions) {
       // ctrack.draw(overlay)
       var mustache = new Image()
-      mustache.src = '/img/tonatiuh.png'
+      mustache.src = '/img/hidalgo.png'
       var mustachePoint = positions[62]
       var newWidth = Math.sqrt(Math.pow(positions[1][0] - positions[13][0], 2) + Math.pow(positions[1][1] - positions[13][1], 2))
+      newWidth = newWidth * 1.5
       var newHeight = Math.abs(mustache.height * newWidth / mustache.width)
       var angle = Math.atan((positions[1][1] - positions[13][1]) / (positions[1][0] - positions[13][0]))
 

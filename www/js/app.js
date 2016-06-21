@@ -1,8 +1,12 @@
 /* global Image, clm, pModel */
-function init () {
-  var vid = document.getElementById('videoel')
-  var overlay = document.getElementById('overlay')
+function app () {
+  var vid = document.querySelector('.videoel')
+  var overlay = document.querySelector('.overlay')
   var overlayCC = overlay.getContext('2d')
+  var startButton = document.querySelector('.startbutton')
+  var saveButton = document.querySelector('.savebutton')
+  var videoWidth = 320
+  var videoHeight = 240
 
   navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia
   window.URL = window.URL || window.webkitURL || window.msURL || window.mozURL
@@ -18,20 +22,20 @@ function init () {
     window.alert('Your browser does not seem to support getUserMedia, using a fallback video instead.')
   }
 
-  navigator.getUserMedia({video: true}, onUserMediaSuccess, onUserMediaError)
+  navigator.getUserMedia({
+    video: true
+  }, onUserMediaSuccess, onUserMediaError)
 
   vid.addEventListener('canplay', enablestart, false)
-  document.querySelector('.startbutton').addEventListener('click', startVideo, false)
-  document.querySelector('.savebutton').addEventListener('click', saveImage, false)
+  startButton.addEventListener('click', startVideo, false)
+  saveButton.addEventListener('click', saveImage, false)
 
   function enablestart () {
-    var startbutton = document.querySelector('.startbutton')
-    startbutton.innerText = 'start'
-    startbutton.disabled = null
+    startButton.innerText = 'start'
+    startButton.disabled = null
 
-    var savebutton = document.querySelector('.savebutton')
-    savebutton.innerText = 'Save image'
-    savebutton.disabled = null
+    saveButton.innerText = 'Save image'
+    saveButton.disabled = null
   }
 
   function startVideo () {
@@ -53,21 +57,19 @@ function init () {
 
   function drawLoop () {
     window.requestAnimFrame(drawLoop)
-    overlayCC.clearRect(0, 0, 400, 300)
+    overlayCC.clearRect(0, 0, videoWidth, videoHeight)
     // psrElement.innerHTML = "score :" + ctrack.getScore().toFixed(4)
     var positions = ctrack.getCurrentPosition()
-    if (positions) {
-      // ctrack.draw(overlay)
-      var mustache = new Image()
-      mustache.src = '/img/hidalgo.png'
-      var mustachePoint = positions[62]
-      var newWidth = Math.sqrt(Math.pow(positions[1][0] - positions[13][0], 2) + Math.pow(positions[1][1] - positions[13][1], 2))
-      newWidth = newWidth * 1.5
-      var newHeight = Math.abs(mustache.height * newWidth / mustache.width)
-      var angle = Math.atan((positions[1][1] - positions[13][1]) / (positions[1][0] - positions[13][0]))
+    // ctrack.draw(overlay)
+    var mustache = new Image()
+    mustache.src = '/img/hidalgo.png'
+    var mustachePoint = positions[62]
+    var newWidth = Math.sqrt(Math.pow(positions[1][0] - positions[13][0], 2) + Math.pow(positions[1][1] - positions[13][1], 2))
+    newWidth = newWidth * 1.5
+    var newHeight = Math.abs(mustache.height * newWidth / mustache.width)
+    var angle = Math.atan((positions[1][1] - positions[13][1]) / (positions[1][0] - positions[13][0]))
 
-      rotateAndPaintImage(overlayCC, mustache, angle, mustachePoint[0], mustachePoint[1], newWidth / 2, newHeight / 2, newWidth, newHeight)
-    }
+    rotateAndPaintImage(overlayCC, mustache, angle, mustachePoint[0], mustachePoint[1], newWidth / 2, newHeight / 2, newWidth, newHeight)
   }
 
   function onUserMediaSuccess (stream) {
@@ -92,7 +94,7 @@ function init () {
 }
 
 if (window.cordova) {
-  document.addEventListener('deviceready', init, false)
+  document.addEventListener('deviceready', app, false)
 } else {
-  init()
+  app()
 }

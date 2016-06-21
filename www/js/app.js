@@ -25,26 +25,45 @@ function init () {
     drawLoop()
   }
 
+  function rotateAndPaintImage (context, image, angleInRad, positionX, positionY, axisX, axisY, width, height) {
+    context.translate(positionX, positionY)
+    context.rotate(angleInRad)
+    context.drawImage(image, -axisX, -axisY, width, height)
+    context.rotate(-angleInRad)
+    context.translate(-positionX, -positionY)
+  }
+
   function drawLoop () {
     window.requestAnimFrame(drawLoop)
     overlayCC.clearRect(0, 0, 400, 300)
     // psrElement.innerHTML = "score :" + ctrack.getScore().toFixed(4)
     var positions = ctrack.getCurrentPosition()
     if (positions) {
-      ctrack.draw(overlay)
+      // ctrack.draw(overlay)
       var mustache = new Image()
       mustache.src = '/img/mustache.png'
-      var noseMouthDiff = Math.abs(positions[47][1] - positions[37][1])
-      var newWidth = Math.abs(positions[44][0] - positions[50][0])
+      var mustachePoint = [(positions[50][0] + positions[44][0]) / 2, (positions[50][1] + positions[44][1]) / 2]
+      var newWidth = Math.sqrt(Math.pow(positions[50][0] - positions[44][0], 2) + Math.pow(positions[50][1] - positions[44][1], 2))
       var newHeight = Math.abs(mustache.height * newWidth / mustache.width)
-      overlayCC.drawImage(
-        mustache,
-        positions[44][0],
-        positions[44][1] - (noseMouthDiff),
-        newWidth,
-        newHeight
-      )
-      // console.log(positions)
+      var angle = Math.atan((positions[44][1] - positions[50][1]) / (positions[44][0] - positions[50][0]))
+
+      rotateAndPaintImage(overlayCC, mustache, angle, mustachePoint[0], mustachePoint[1], newWidth / 2, newHeight * 2, newWidth, newHeight)
+
+      // var noseMouthDiff = Math.abs(positions[47][1] - positions[37][1])
+      // var newWidth = Math.sqrt(Math.pow(positions[50][0] - positions[44][0],2)+Math.pow(positions[50][1] - positions[44][1],2))
+      // var newHeight = Math.abs(mustache.height * newWidth / mustache.width)
+      // var angle = Math.atan((positions[44][1] - positions[50][1])/(positions[44][0] - positions[50][0]))
+      // overlayCC.translate(positions[44][0], positions[44][1] - noseMouthDiff)
+      // overlayCC.rotate(angle)
+      // overlayCC.drawImage(
+      //   mustache,
+      //   0,
+      //   0,
+      //   newWidth,
+      //   newHeight
+      // )
+      // overlayCC.rotate(-angle)
+      // overlayCC.translate(-positions[44][0], -(positions[44][1] - noseMouthDiff))
     }
   }
 
@@ -53,12 +72,6 @@ function init () {
     // set up stream
 
     var videoSelector = {video: true}
-    if (window.navigator.appVersion.match(/Chrome\/(.*?) /)) {
-      var chromeVersion = parseInt(window.navigator.appVersion.match(/Chrome\/(\d+)\./)[1], 10)
-      if (chromeVersion < 20) {
-        videoSelector = 'video'
-      }
-    }
 
     navigator.getUserMedia(videoSelector, function (stream) {
       if (vid.mozCaptureStream) {

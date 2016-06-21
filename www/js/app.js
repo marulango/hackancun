@@ -10,10 +10,28 @@ function init () {
   var ctrack = new clm.tracker({useWebGL : true}) // eslint-disable-line
   ctrack.init(pModel)
 
+  // check for camerasupport
+  if (!navigator.getUserMedia) {
+    window.insertAltVideo(vid)
+    document.getElementById('gum').className = 'hide'
+    document.getElementById('nogum').className = 'nohide'
+    window.alert('Your browser does not seem to support getUserMedia, using a fallback video instead.')
+  }
+
+  navigator.getUserMedia({video: true}, onUserMediaSuccess, onUserMediaError)
+
+  vid.addEventListener('canplay', enablestart, false)
+  document.querySelector('.startbutton').addEventListener('click', startVideo, false)
+  document.querySelector('.savebutton').addEventListener('click', saveImage, false)
+
   function enablestart () {
-    var startbutton = document.getElementById('startbutton')
+    var startbutton = document.querySelector('.startbutton')
     startbutton.innerText = 'start'
     startbutton.disabled = null
+
+    var savebutton = document.querySelector('.savebutton')
+    savebutton.innerText = 'Save image'
+    savebutton.disabled = null
   }
 
   function startVideo () {
@@ -52,34 +70,25 @@ function init () {
     }
   }
 
-  // check for camerasupport
-  if (navigator.getUserMedia) {
-    // set up stream
+  function onUserMediaSuccess (stream) {
+    if (vid.mozCaptureStream) {
+      vid.mozSrcObject = stream
+    } else {
+      vid.src = (window.URL && window.URL.createObjectURL(stream)) || stream
+    }
+    vid.play()
+  }
 
-    var videoSelector = {video: true}
-
-    navigator.getUserMedia(videoSelector, function (stream) {
-      if (vid.mozCaptureStream) {
-        vid.mozSrcObject = stream
-      } else {
-        vid.src = (window.URL && window.URL.createObjectURL(stream)) || stream
-      }
-      vid.play()
-    }, function () {
-      window.insertAltVideo(vid)
-      document.getElementById('gum').className = 'hide'
-      document.getElementById('nogum').className = 'nohide'
-      window.alert('There was some problem trying to fetch video from your webcam, using a fallback video instead.')
-    })
-  } else {
+  function onUserMediaError () {
     window.insertAltVideo(vid)
     document.getElementById('gum').className = 'hide'
     document.getElementById('nogum').className = 'nohide'
-    window.alert('Your browser does not seem to support getUserMedia, using a fallback video instead.')
+    window.alert('There was some problem trying to fetch video from your webcam, using a fallback video instead.')
   }
 
-  vid.addEventListener('canplay', enablestart, false)
-  document.getElementById('startbutton').addEventListener('click', startVideo, false)
+  function saveImage () {
+    console.log('saving image')
+  }
 }
 
 if (window.cordova) {

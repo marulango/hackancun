@@ -1,0 +1,81 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  background: black;
+}
+
+.container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-flow: column;
+}
+
+.toolbar-button {
+  -webkit-appearance: none;
+  appearance: none;
+  display: inline-block;
+  width: 60px;
+  height: 60px;
+  background: white;
+  border: none;
+}
+
+.savebutton {
+  border-radius: 50%;
+}
+
+.videocontainer {
+  align-items: center;
+  display: flex;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  margin-left: -180px;
+}
+
+.videoel, .results {
+  margin: 0 auto;
+}
+
+.toolbar {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.toolbar-button,
+.results,
+.resultimage {
+  display: none;
+}
+
+.camera .startbutton,
+.detecting .savebutton,
+.preview .resultimage,
+.preview .stampbutton,
+.preview .cancelbutton {
+  display: block;
+}
+
+.preview .videocontainer {
+  display: none;
+}
+
+.cancelbutton {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 44px;
+  height: 44px;
+}

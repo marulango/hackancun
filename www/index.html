@@ -8,20 +8,7 @@
   <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
 
   <title>Face Test</title>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-    }
-    .overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
-    .results {
-      display: none;
-    }
-  </style>
+  <link rel="stylesheet" href="app.css" />
 </head>
 <body>
   <script src="cordova.js"></script>
@@ -39,13 +26,20 @@
   <script src="js/svmfilter_webgl.js"></script>
   <script src="js/svmfilter_fft.js"></script>
   <script src="js/mossefilter.js"></script>
-  <div id="container">
-    <video class="videoel" autoplay width="360" height="480"></video>
-    <canvas class="overlay" width="360" height="480"></canvas>
+  <div class="container">
+    <canvas class="results" width="360" height="480"></canvas>
+    <img class="resultimage" width="360" height="480" />
+    <div class="videocontainer">
+      <video class="videoel" autoplay width="360" height="480"></video>
+      <canvas class="overlay" width="360" height="480"></canvas>
+    </div>
+    <div class="toolbar">
+      <button type="button" disabled class="toolbar-button startbutton">Detect</button>
+      <button type="button" class="toolbar-button savebutton">Snap</button>
+      <button type="button" class="toolbar-button stampbutton">Stamp</button>
+    </div>
+    <button type="button" class="toolbar-button cancelbutton">X</button>
   </div>
-  <button type="button" disabled class="startbutton">wait, loading video</button>
-  <button type="button" disabled class="savebutton">wait, loading video</button>
-  <canvas class="results" width="360" height="480"></canvas>
   <script src="js/app.js"></script>
 </body>
 </html>

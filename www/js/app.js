@@ -7,6 +7,9 @@ function app () {
   var resultsCC = results.getContext('2d')
   var startButton = document.querySelector('.startbutton')
   var saveButton = document.querySelector('.savebutton')
+  var container = document.querySelector('.container')
+  var resultImage = document.querySelector('.resultimage')
+  var cancelButton = document.querySelector('.cancelbutton')
   var videoWidth = 360
   var videoHeight = 480
   var stream
@@ -14,36 +17,33 @@ function app () {
   navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia
   window.URL = window.URL || window.webkitURL || window.msURL || window.mozURL
 
-  var ctrack = new clm.tracker({useWebGL : true}) // eslint-disable-line
-  window.ctrack.init(window.pModel)
+  var ctrack = new window.clm.tracker({useWebGL : true}) // eslint-disable-line
+  ctrack.init(window.pModel)
 
   // check for camerasupport
   if (!navigator.getUserMedia) {
-    window.insertAltVideo(vid)
-    document.getElementById('gum').className = 'hide'
-    document.getElementById('nogum').className = 'nohide'
-    window.alert('Your browser does not seem to support getUserMedia, using a fallback video instead.')
+    window.alert('Your browser does not seem to support getUserMedia.')
+    return
   }
 
   navigator.getUserMedia({
     video: {width: {max: videoWidth}, height: {max: videoHeight}}
   }, onUserMediaSuccess, onUserMediaError)
 
-  vid.addEventListener('canplay', enablestart, false)
-  startButton.addEventListener('click', startVideo, false)
+  vid.addEventListener('canplay', canDetect, false)
+  startButton.addEventListener('click', startDetecting, false)
   saveButton.addEventListener('click', saveImage, false)
+  cancelButton.addEventListener('click', cancel, false)
 
-  function enablestart () {
+  function canDetect () {
     startButton.innerText = 'start'
     startButton.disabled = null
+    setState('camera')
   }
 
-  function startVideo () {
-    // start video
-    vid.play()
-    // start tracking
+  function startDetecting () {
     ctrack.start(vid)
-    // start loop to draw face
+    setState('detecting')
     drawLoop()
   }
 
@@ -60,6 +60,9 @@ function app () {
     overlayCC.clearRect(0, 0, videoWidth, videoHeight)
     // psrElement.innerHTML = "score :" + ctrack.getScore().toFixed(4)
     var positions = ctrack.getCurrentPosition()
+    if (!positions) {
+      return
+    }
     // ctrack.draw(overlay)
     var mustache = new Image()
     mustache.src = '/img/hidalgo.png'
@@ -87,10 +90,7 @@ function app () {
   }
 
   function onUserMediaError () {
-    window.insertAltVideo(vid)
-    document.getElementById('gum').className = 'hide'
-    document.getElementById('nogum').className = 'nohide'
-    window.alert('There was some problem trying to fetch video from your webcam, using a fallback video instead.')
+    window.alert('User media error.')
   }
 
   function saveImage () {
@@ -99,15 +99,26 @@ function app () {
       return
     }
 
+    setState('preview')
+
     resultsCC.drawImage(vid, 0, 0, videoWidth, videoHeight)
     resultsCC.drawImage(overlay, 0, 0, videoWidth, videoHeight)
+    ctrack.stop()
 
     results.toBlob(function cb (blob) {
-      var image = document.createElement('img')
       var url = window.URL.createObjectURL(blob)
-      image.src = url
-      document.body.appendChild(image)
+      resultImage.src = url
     }, 'image/jpeg', 90)
+  }
+
+  function cancel () {
+    vid.play()
+    ctrack.start()
+    setState('detecting')
+  }
+
+  function setState (state) {
+    container.className = 'container ' + state
   }
 }
 

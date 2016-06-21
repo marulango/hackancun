@@ -100,6 +100,8 @@ function app () {
     }
 
     resultsCC.drawImage(vid, 0, 0, videoWidth, videoHeight)
+    resultsCC.drawImage(overlay, 0, 0, videoWidth, videoHeight)
+
     var dataurl = results.toBlob(function cb (blob) {
       var image = document.createElement('img')
       var url = window.URL.createObjectURL(blob)

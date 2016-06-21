@@ -11,7 +11,7 @@ function app () {
   var resultImage = document.querySelector('.resultimage')
   var cancelButton = document.querySelector('.cancelbutton')
   var videoWidth = 360
-  var videoHeight = 480
+  var videoHeight = 270
   var stream
 
   navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia
@@ -55,6 +55,19 @@ function app () {
     context.translate(-positionX, -positionY)
   }
 
+  function drawPart (context, src, point1, point2, scale, offsetX, offsetY) {
+    var image = new Image()
+    image.src = src
+    var angle = Math.atan((point1[1] - point2[1]) / (point1[0] - point2[0]))
+    var width = Math.sqrt(Math.pow(point1[0] - point2[0], 2) + Math.pow(point1[1] - point2[1], 2))
+    width = width * scale
+    var height = Math.abs(image.height * width / image.width)
+    var centerPoint = [(point1[0]+point2[0])/2, (point1[1]+point2[1])/2]
+    var offsetXpx = width * offsetX
+    var offsetYpx = height * offsetY
+    rotateAndPaintImage(context, image, angle, centerPoint[0], centerPoint[1], width / 2 + offsetXpx, height / 2 + offsetYpx, width, height)
+  }
+
   function drawLoop () {
     window.requestAnimFrame(drawLoop)
     overlayCC.clearRect(0, 0, videoWidth, videoHeight)
@@ -64,15 +77,51 @@ function app () {
       return
     }
     // ctrack.draw(overlay)
-    var mustache = new Image()
-    mustache.src = '/img/hidalgo.png'
-    var mustachePoint = positions[62]
-    var newWidth = Math.sqrt(Math.pow(positions[1][0] - positions[13][0], 2) + Math.pow(positions[1][1] - positions[13][1], 2))
-    newWidth = newWidth * 1.5
-    var newHeight = Math.abs(mustache.height * newWidth / mustache.width)
-    var angle = Math.atan((positions[1][1] - positions[13][1]) / (positions[1][0] - positions[13][0]))
-
-    rotateAndPaintImage(overlayCC, mustache, angle, mustachePoint[0], mustachePoint[1], newWidth / 2, newHeight / 2, newWidth, newHeight)
+    var tonatiuh = [
+      {
+        src: 'img/dientes-abajo-tonatiuh.png',
+        point1: positions[54],
+        point2: positions[52],
+        scale: 2.5,
+        offsetX: 0,
+        offsetY: -.2
+      },
+      {
+        src: 'img/dientes-arriba-tonatiuh.png',
+        point1: positions[45],
+        point2: positions[49],
+        scale: 2,
+        offsetX: 0,
+        offsetY: 0
+      },
+      {
+        src: 'img/ojos-tonatiuh.png',
+        point1: positions[23],
+        point2: positions[28],
+        scale: 1,
+        offsetX: 0,
+        offsetY: 0
+      },
+      {
+        src: 'img/nariz-tonatiuh.png',
+        point1: positions[35],
+        point2: positions[39],
+        scale: 2,
+        offsetX: 0,
+        offsetY: .25
+      },
+      {
+        src: 'img/tocado-tonatiuh.png',
+        point1: positions[1],
+        point2: positions[13],
+        scale: 1.7,
+        offsetX: 0,
+        offsetY: 0
+      },
+    ]
+    tonatiuh.forEach(function(part) {
+      drawPart(overlayCC, part.src, part.point1, part.point2, part.scale, part.offsetX, part.offsetY)
+    })
   }
 
   function onUserMediaSuccess (videoStream) {

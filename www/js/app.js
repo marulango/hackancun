@@ -122,6 +122,16 @@ function app () {
     tonatiuh.forEach(function(part) {
       drawPart(overlayCC, part.src, part.point1, part.point2, part.scale, part.offsetX, part.offsetY)
     })
+    var mustache = new Image()
+    mustache.src = 'img/hidalgo.png'
+    var mustachePoint = positions[62]
+    var newWidth = Math.sqrt(Math.pow(positions[1][0] - positions[13][0], 2) + Math.pow(positions[1][1] - positions[13][1], 2))
+    newWidth = newWidth * 1.5
+    var newHeight = Math.abs(mustache.height * newWidth / mustache.width)
+    var angle = Math.atan((positions[1][1] - positions[13][1]) / (positions[1][0] - positions[13][0]))
+
+    rotateAndPaintImage(overlayCC, mustache, angle, mustachePoint[0], mustachePoint[1], newWidth / 2, newHeight / 2, newWidth, newHeight)
+>>>>>>> a679da9... relative'
   }
 
   function onUserMediaSuccess (videoStream) {

@@ -3,10 +3,13 @@ function app () {
   var vid = document.querySelector('.videoel')
   var overlay = document.querySelector('.overlay')
   var overlayCC = overlay.getContext('2d')
+  var results = document.querySelector('.results')
+  var resultsCC = results.getContext('2d')
   var startButton = document.querySelector('.startbutton')
   var saveButton = document.querySelector('.savebutton')
-  var videoWidth = 320
-  var videoHeight = 240
+  var videoWidth = 411
+  var videoHeight = 308
+  var stream
 
   navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia
   window.URL = window.URL || window.webkitURL || window.msURL || window.mozURL
@@ -23,7 +26,7 @@ function app () {
   }
 
   navigator.getUserMedia({
-    video: true
+    video: {width: {max: videoWidth}, height: {max: videoHeight}}
   }, onUserMediaSuccess, onUserMediaError)
 
   vid.addEventListener('canplay', enablestart, false)
@@ -33,9 +36,6 @@ function app () {
   function enablestart () {
     startButton.innerText = 'start'
     startButton.disabled = null
-
-    saveButton.innerText = 'Save image'
-    saveButton.disabled = null
   }
 
   function startVideo () {
@@ -72,12 +72,17 @@ function app () {
     rotateAndPaintImage(overlayCC, mustache, angle, mustachePoint[0], mustachePoint[1], newWidth / 2, newHeight / 2, newWidth, newHeight)
   }
 
-  function onUserMediaSuccess (stream) {
+  function onUserMediaSuccess (videoStream) {
     if (vid.mozCaptureStream) {
+      stream = videoStream
       vid.mozSrcObject = stream
     } else {
-      vid.src = (window.URL && window.URL.createObjectURL(stream)) || stream
+      stream = (window.URL && window.URL.createObjectURL(videoStream)) || videoStream
+      vid.src = stream
     }
+
+    saveButton.innerText = 'Save image'
+    saveButton.disabled = null
     vid.play()
   }
 
@@ -89,7 +94,19 @@ function app () {
   }
 
   function saveImage () {
-    console.log('saving image')
+    if (!stream) {
+      console.error('saving image when theres no stream')
+      return
+    }
+
+    resultsCC.drawImage(vid, 0, 0, videoWidth, videoHeight)
+    var dataurl = results.toBlob(function cb (blob) {
+      var image = document.createElement('img')
+      var url = window.URL.createObjectURL(blob)
+      image.src = url
+      document.body.appendChild(image)
+    }, 'image/jpeg', 90)
+    console.log(dataurl)
   }
 }
 

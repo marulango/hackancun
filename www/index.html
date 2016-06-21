@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src 'self' mediastream: blob:; img-src * android-webview-video-poster: data:;">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src 'self' mediastream: blob:; img-src * android-webview-video-poster: data: blob:;">
   <meta name="format-detection" content="telephone=no">
   <meta name="msapplication-tap-highlight" content="no">
   <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
@@ -18,11 +18,8 @@
       top: 0;
       left: 0;
     }
-    .overlay,
-    .videoel,
     .results {
-      width: 320px;
-      height: 240px;
+      display: none;
     }
   </style>
 </head>
@@ -43,12 +40,12 @@
   <script src="js/svmfilter_fft.js"></script>
   <script src="js/mossefilter.js"></script>
   <div id="container">
-    <video class="videoel" autoplay width="320" height="240"></video>
-    <canvas class="overlay" width="320" height="240"></canvas>
+    <video class="videoel" autoplay width="411" height="308"></video>
+    <canvas class="overlay" width="411" height="308"></canvas>
   </div>
   <button type="button" disabled class="startbutton">wait, loading video</button>
   <button type="button" disabled class="savebutton">wait, loading video</button>
-  <canvas id="results"></canvas>
+  <canvas class="results" width="411" height="308"></canvas>
   <script src="js/app.js"></script>
 </body>
 </html>

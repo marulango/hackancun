@@ -62,7 +62,7 @@ function app () {
     var width = Math.sqrt(Math.pow(point1[0] - point2[0], 2) + Math.pow(point1[1] - point2[1], 2))
     width = width * scale
     var height = Math.abs(image.height * width / image.width)
-    var centerPoint = [(point1[0]+point2[0])/2, (point1[1]+point2[1])/2]
+    var centerPoint = [(point1[0] + point2[0]) / 2, (point1[1] + point2[1]) / 2]
     var offsetXpx = width * offsetX
     var offsetYpx = height * offsetY
     rotateAndPaintImage(context, image, angle, centerPoint[0], centerPoint[1], width / 2 + offsetXpx, height / 2 + offsetYpx, width, height)
@@ -84,7 +84,7 @@ function app () {
         point2: positions[52],
         scale: 2.5,
         offsetX: 0,
-        offsetY: -.2
+        offsetY: -0.2
       },
       {
         src: 'img/dientes-arriba-tonatiuh.png',
@@ -108,7 +108,7 @@ function app () {
         point2: positions[39],
         scale: 2,
         offsetX: 0,
-        offsetY: .25
+        offsetY: 0.25
       },
       {
         src: 'img/tocado-tonatiuh.png',
@@ -117,9 +117,9 @@ function app () {
         scale: 1.7,
         offsetX: 0,
         offsetY: 0
-      },
+      }
     ]
-    tonatiuh.forEach(function(part) {
+    tonatiuh.forEach(function (part) {
       drawPart(overlayCC, part.src, part.point1, part.point2, part.scale, part.offsetX, part.offsetY)
     })
     var mustache = new Image()
@@ -131,7 +131,6 @@ function app () {
     var angle = Math.atan((positions[1][1] - positions[13][1]) / (positions[1][0] - positions[13][0]))
 
     rotateAndPaintImage(overlayCC, mustache, angle, mustachePoint[0], mustachePoint[1], newWidth / 2, newHeight / 2, newWidth, newHeight)
->>>>>>> a679da9... relative'
   }
 
   function onUserMediaSuccess (videoStream) {
